@@ -7,11 +7,11 @@ class Perfil extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF111326),
+      backgroundColor: const Color(0xFFFFF8F0),
 
       appBar: AppBar(
-        title: const Text("IMPOSTOR"),
-        backgroundColor: const Color(0xFF292044),
+        title: const Text("MINHAS RECEITAS"),
+        backgroundColor: const Color(0xFFE67E22),
         foregroundColor: Colors.white,
       ),
 
@@ -22,42 +22,42 @@ class Perfil extends StatelessWidget {
           padding: const EdgeInsets.all(20),
 
           decoration: BoxDecoration(
-            color: const Color(0xFF27213F),
+            color: const Color(0xFFFFE8D2),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: const Color(0xFF8B5CF6),
+              color: const Color(0xFFE67E22),
             ),
           ),
 
           child: Column(
             children: [
               const Icon(
-                Icons.visibility_off,
+                Icons.restaurant_menu,
                 size: 70,
-                color: Color(0xFFC4B5FD),
+                color: Color(0xFFE67E22),
               ),
 
               const SizedBox(height: 20),
 
               const Text(
-                "Quem é o impostor?",
+                "Bem-vindo ao Minhas Receitas!",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 26,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: Color(0xFF5D4037),
                 ),
               ),
 
               const SizedBox(height: 12),
 
               const Text(
-                "Descubra quem está mentindo "
-                    "antes que seja tarde!",
+                "Encontre inspiração para preparar "
+                    "pratos deliciosos no seu dia a dia!",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 16,
-                  color: Color(0xFFB8B9D0),
+                  color: Color(0xFF795548),
                 ),
               ),
 
@@ -66,16 +66,16 @@ class Perfil extends StatelessWidget {
               const Row(
                 children: [
                   Icon(
-                    Icons.people,
-                    color: Color(0xFFC4B5FD),
+                    Icons.menu_book,
+                    color: Color(0xFFE67E22),
                   ),
                   SizedBox(width: 10),
                   Expanded(
                     child: Text(
-                      "De 3 a 10 jogadores",
+                      "Diversas receitas para descobrir",
                       style: TextStyle(
                         fontSize: 16,
-                        color: Colors.white,
+                        color: Color(0xFF5D4037),
                       ),
                     ),
                   ),
@@ -89,12 +89,12 @@ class Perfil extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () {},
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF8B5CF6),
+                    backgroundColor: const Color(0xFFE67E22),
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.all(16),
                   ),
                   child: const Text(
-                    "COMEÇAR JOGO",
+                    "VER RECEITAS",
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:impostor_game/Perfil.dart';
+import 'package:receitas_app/Perfil.dart';
 
 class Principal extends StatelessWidget {
   const Principal({super.key});
