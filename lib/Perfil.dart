@@ -81,6 +81,21 @@ class Perfil extends StatelessWidget {
                   ),
                 ],
               ),
+              const SizedBox(height: 25),
+
+              TextField(
+                decoration: InputDecoration(
+                  labelText: "Pesquisar receita",
+                  hintText: "Digite o nome da receita",
+                  prefixIcon: const Icon(Icons.search),
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+
 
               const SizedBox(height: 30),
 
