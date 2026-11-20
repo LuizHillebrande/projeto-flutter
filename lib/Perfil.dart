@@ -1,5 +1,7 @@
 
 import 'package:flutter/material.dart';
+import 'package:receitas_app/Resultado.dart';
+import 'package:receitas_app/Sobre.dart';
 
 class Perfil extends StatefulWidget {
   const Perfil({super.key});
@@ -16,18 +18,20 @@ class _PerfilState extends State<Perfil> {
 
   // valida e realiza a pesquisa
   void pesquisar() {
-    String consulta = pesquisaController.text.trim(); //remove espacos desnecessarios
+    String consulta = pesquisaController.text.trim();
 
     if (consulta.isEmpty) {
       setState(() {
-        mensagem = "digite o nome de uma receita para pesquisar.";
+        mensagem = "pesquisa inválida! digite o nome de uma receita.";
         erro = true;
       });
     } else {
-      setState(() {
-        mensagem = "você pesquisou por: $consulta";
-        erro = false;
-      });
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Resultado(consulta: consulta),
+        ),
+      );
     }
   }
 
@@ -128,6 +132,28 @@ class _PerfilState extends State<Perfil> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
+                ),
+              ),
+
+              const SizedBox(height: 15),
+
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const Sobre(),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF795548),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.all(16),
+                  ),
+                  child: const Text("SOBRE O APLICATIVO"),
                 ),
               ),
 
