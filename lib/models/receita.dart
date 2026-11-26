@@ -26,7 +26,9 @@ class Receita {
   factory Receita.fromJson(Map<String, dynamic> json) {
     return Receita(
       id: json['id'] is int ? json['id'] : 0,
-      nome: json['name'] is String ? json['name'] : 'Receita sem nome',
+      nome: json['name'] is String
+          ? json['name']
+          : 'Receita sem nome',
       imagem: json['image'] is String ? json['image'] : '',
       ingredientes: json['ingredients'] is List
           ? List<String>.from(json['ingredients'])
