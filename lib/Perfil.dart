@@ -1,197 +1,108 @@
-
 import 'package:flutter/material.dart';
 import 'package:receitas_app/Resultado.dart';
-import 'package:receitas_app/Sobre.dart';
+import 'package:receitas_app/models/receita.dart';
+import 'package:receitas_app/widgets/CartaoReceita.dart';
 
-class Perfil extends StatefulWidget {
-  const Perfil({super.key});
+class Perfil extends StatelessWidget {
+  final List<Receita> receitas;
+  final bool carregando;
+  final String? erro;
+  final VoidCallback aoTentarNovamente;
+  final void Function(Receita) aoAbrirReceita;
+  final Map<int, Receita> favoritos;
+  final void Function(Receita) aoAlternarFavorito;
 
-  @override
-  State<Perfil> createState() => _PerfilState();
-}
-
-class _PerfilState extends State<Perfil> {
-  final TextEditingController pesquisaController = TextEditingController();
-
-  String mensagem = "";
-  bool erro = false;
-
-  // valida e realiza a pesquisa
-  void pesquisar() {
-    String consulta = pesquisaController.text.trim();
-
-    if (consulta.isEmpty) {
-      setState(() {
-        mensagem = "pesquisa inválida! digite o nome de uma receita.";
-        erro = true;
-      });
-    } else {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => Resultado(consulta: consulta),
-        ),
-      );
-    }
-  }
-
-  @override
-  void dispose() {
-    pesquisaController.dispose();
-    super.dispose();
-  }
+  const Perfil({
+    super.key,
+    required this.receitas,
+    required this.carregando,
+    required this.erro,
+    required this.aoTentarNovamente,
+    required this.aoAbrirReceita,
+    required this.favoritos,
+    required this.aoAlternarFavorito,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFFFF8F0),
-
-      appBar: AppBar(
-        title: const Text("MINHAS RECEITAS"),
-        backgroundColor: const Color(0xFFE67E22),
-        foregroundColor: Colors.white,
-      ),
-
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(20),
-
-          decoration: BoxDecoration(
-            color: const Color(0xFFFFE8D2),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: const Color(0xFFE67E22),
-            ),
-          ),
-
-          child: Column(
-            children: [
-              const Icon(
-                Icons.restaurant_menu,
-                size: 70,
-                color: Color(0xFFE67E22),
-              ),
-
-              const SizedBox(height: 20),
-
-              const Text(
-                "Bem-vindo ao Minhas Receitas!",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF5D4037),
-                ),
-              ),
-
-              const SizedBox(height: 12),
-
-              const Text(
-                "Encontre inspiração para preparar "
-                    "pratos deliciosos no seu dia a dia!",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Color(0xFF795548),
-                ),
-              ),
-
-              const SizedBox(height: 30),
-
-              const Row(
-                children: [
-                  Icon(
-                    Icons.menu_book,
-                    color: Color(0xFFE67E22),
-                  ),
-                  SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      "Diversas receitas para descobrir",
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Color(0xFF5D4037),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 25),
-
-              TextField(
-                controller: pesquisaController,
-                decoration: InputDecoration(
-                  labelText: "Pesquisar receita",
-                  hintText: "Digite o nome da receita",
-                  prefixIcon: const Icon(Icons.search),
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 15),
-
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const Sobre(),
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF795548),
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.all(16),
-                  ),
-                  child: const Text("SOBRE O APLICATIVO"),
-                ),
-              ),
-
-              const SizedBox(height: 20),
-
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: pesquisar,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFE67E22),
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.all(16),
-                  ),
-                  child: const Text(
-                    "PESQUISAR",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 15),
-
-              Text(
-                mensagem,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 15,
-                  color: erro ? Colors.red : Colors.green,
-                ),
-              ),
-            ],
+    return ListView(
+      padding: const EdgeInsets.all(20),
+      children: [
+        const Text(
+          'Receitas',
+          style: TextStyle(
+            fontSize: 25,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF263F35),
           ),
         ),
-      ),
+        const SizedBox(height: 8),
+        const Text('Pesquise uma receita pelo nome.'),
+        const SizedBox(height: 18),
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Resultado(
+                    aoAbrirReceita: aoAbrirReceita,
+                    favoritos: favoritos,
+                    aoAlternarFavorito: aoAlternarFavorito,
+                  ),
+                ),
+              );
+            },
+            child: const Text('Buscar receitas'),
+          ),
+        ),
+        const SizedBox(height: 24),
+        const Text(
+          'Receitas disponíveis',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF263F35),
+          ),
+        ),
+        const SizedBox(height: 12),
+        if (carregando)
+          const Center(
+            child: Padding(
+              padding: EdgeInsets.all(24),
+              child: Column(
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 12),
+                  Text('Carregando receitas...'),
+                ],
+              ),
+            ),
+          )
+        else if (erro != null)
+          Column(
+            children: [
+              Text(erro!, textAlign: TextAlign.center),
+              const SizedBox(height: 12),
+              ElevatedButton(
+                onPressed: aoTentarNovamente,
+                child: const Text('Tentar novamente'),
+              ),
+            ],
+          )
+        else if (receitas.isEmpty)
+            const Text('Nenhuma receita disponível.')
+          else
+            ...receitas.map(
+                  (receita) => CartaoReceita(
+                receita: receita,
+                favoritada: favoritos.containsKey(receita.id),
+                aoAbrir: () => aoAbrirReceita(receita),
+                aoAlternarFavorito: () => aoAlternarFavorito(receita),
+              ),
+            ),
+      ],
     );
   }
 }

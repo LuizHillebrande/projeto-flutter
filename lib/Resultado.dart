@@ -1,103 +1,204 @@
-
 import 'package:flutter/material.dart';
+import 'package:receitas_app/models/receita.dart';
+import 'package:receitas_app/services/receita_api.dart';
+import 'package:receitas_app/widgets/CartaoReceita.dart';
 
-class Resultado extends StatelessWidget {
-  final String consulta;
+class Resultado extends StatefulWidget {
+  final void Function(Receita) aoAbrirReceita;
+  final Map<int, Receita> favoritos;
+  final void Function(Receita) aoAlternarFavorito;
 
-  const Resultado({super.key, required this.consulta});
+  const Resultado({
+    super.key,
+    required this.aoAbrirReceita,
+    required this.favoritos,
+    required this.aoAlternarFavorito,
+  });
+
+  @override
+  State<Resultado> createState() => _ResultadoState();
+}
+
+class _ResultadoState extends State<Resultado> {
+  final TextEditingController controller = TextEditingController();
+  List<Receita> resultados = [];
+  bool carregando = false;
+  bool pesquisou = false;
+  String? erro;
+  String mensagem = '';
+
+  Future<void> pesquisar() async {
+    final consulta = controller.text.trim();
+
+    if (consulta.isEmpty) {
+      setState(() {
+        mensagem = 'Digite um nome para pesquisar.';
+        pesquisou = false;
+        resultados = [];
+        erro = null;
+      });
+      return;
+    }
+
+    FocusScope.of(context).unfocus();
+
+    setState(() {
+      carregando = true;
+      pesquisou = true;
+      mensagem = '';
+      erro = null;
+      resultados = [];
+    });
+
+    try {
+      final lista = await ReceitaApi.pesquisar(consulta);
+
+      if (!mounted) return;
+
+      setState(() {
+        resultados = lista;
+        carregando = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+
+      setState(() {
+        erro = 'Não foi possível carregar as receitas.';
+        carregando = false;
+      });
+    }
+  }
+
+  void limparPesquisa() {
+    controller.clear();
+
+    setState(() {
+      resultados = [];
+      carregando = false;
+      pesquisou = false;
+      erro = null;
+      mensagem = '';
+    });
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFF8F0),
-
       appBar: AppBar(
-        title: const Text("RESULTADOS"),
-        backgroundColor: const Color(0xFFE67E22),
-        foregroundColor: Colors.white,
+        title: const Text('Pesquisar receitas'),
       ),
-
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(20),
-
-          decoration: BoxDecoration(
-            color: const Color(0xFFFFE8D2),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: const Color(0xFFE67E22),
+      body: ListView(
+        padding: const EdgeInsets.all(20),
+        children: [
+          const Text(
+            'Qual receita você procura?',
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF263F35),
             ),
           ),
-
-          child: Column(
-            children: [
-              const Icon(
-                Icons.restaurant_menu,
-                size: 70,
-                color: Color(0xFFE67E22),
+          const SizedBox(height: 20),
+          TextField(
+            controller: controller,
+            textInputAction: TextInputAction.search,
+            onSubmitted: (_) => pesquisar(),
+            decoration: const InputDecoration(
+              labelText: 'Nome da receita',
+              hintText: 'Buscar pelo nome',
+              prefixIcon: Icon(Icons.search),
+              border: OutlineInputBorder(),
+            ),
+          ),
+          if (mensagem.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            Text(
+              mensagem,
+              style: const TextStyle(color: Colors.red),
+            ),
+          ],
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: carregando ? null : pesquisar,
+              child: const Text('Pesquisar'),
+            ),
+          ),
+          OutlinedButton(
+            onPressed: limparPesquisa,
+            child: const Text('Limpar pesquisa'),
+          ),
+          const SizedBox(height: 24),
+          if (carregando)
+            const Center(
+              child: Column(
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 12),
+                  Text('Carregando receitas...'),
+                ],
               ),
-
-              const SizedBox(height: 20),
-
-              const Text(
-                "Resultado da pesquisa",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF5D4037),
+            )
+          else if (erro != null)
+            Column(
+              children: [
+                Text(
+                  erro!,
+                  textAlign: TextAlign.center,
                 ),
-              ),
-
-              const SizedBox(height: 20),
-
-              Text(
-                "Receitas pesquisadas: $consulta",
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 18,
-                  color: Color(0xFF795548),
+                const SizedBox(height: 12),
+                ElevatedButton(
+                  onPressed: pesquisar,
+                  child: const Text('Tentar novamente'),
                 ),
-              ),
-
-              const SizedBox(height: 20),
-
-              const Text(
-                "Os resultados das receitas serão exibidos aqui.",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Color(0xFF795548),
-                ),
-              ),
-
-              const SizedBox(height: 30),
-
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFE67E22),
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.all(16),
-                  ),
-                  child: const Text(
-                    "VOLTAR",
+              ],
+            )
+          else if (pesquisou && resultados.isEmpty)
+              const Column(
+                children: [
+                  Icon(Icons.search, size: 50),
+                  SizedBox(height: 12),
+                  Text(
+                    'Nenhum resultado',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 22,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+                  SizedBox(height: 8),
+                  Text(
+                    'Não encontramos receitas para esse nome. Tente outro termo.',
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              )
+            else if (resultados.isNotEmpty) ...[
+                Text(
+                  'Resultados para "${controller.text.trim()}"',
+                  style: const TextStyle(
+                    fontSize: 19,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ),
+                const SizedBox(height: 12),
+                ...resultados.map(
+                      (receita) => CartaoReceita(
+                    receita: receita,
+                    favoritada: widget.favoritos.containsKey(receita.id),
+                    aoAbrir: () => widget.aoAbrirReceita(receita),
+                    aoAlternarFavorito: () =>
+                        widget.aoAlternarFavorito(receita),
+                  ),
+                ),
+              ],
+        ],
       ),
     );
   }
