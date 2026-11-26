@@ -18,6 +18,7 @@ class _PrincipalState extends State<Principal> {
   String? erro;
   List<Receita> receitas = [];
   final Map<int, Receita> favoritos = {};
+  final GlobalKey<NavigatorState> navegador = GlobalKey<NavigatorState>();
 
   @override
   void initState() {
@@ -61,8 +62,7 @@ class _PrincipalState extends State<Principal> {
   }
 
   void abrirDetalhes(Receita receita) {
-    Navigator.push(
-      context,
+    navegador.currentState!.push(
       MaterialPageRoute(
         builder: (context) => Detalhes(
           receita: receita,
@@ -76,6 +76,7 @@ class _PrincipalState extends State<Principal> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navegador,
       debugShowCheckedModeBanner: false,
       title: 'Saborê',
       theme: ThemeData(
